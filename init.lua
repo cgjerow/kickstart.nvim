@@ -35,13 +35,15 @@ _G.set_colors = function()
   -- Basic UI
   hl(0, 'Normal', { fg = colors.white, bg = colors.black })
   hl(0, 'NormalNC', { fg = colors.white, bg = colors.black })
-  hl(0, 'Comment', { fg = colors.black_bright, italic = true })
+  hl(0, 'Comment', { fg = colors.black_bright, italic = false })
   hl(0, 'LineNr', { fg = colors.black_bright })
   hl(0, 'CursorLineNr', { fg = colors.black_bright, bold = true })
   hl(0, 'Keyword', { fg = colors.cyan, bold = true })
   hl(0, 'Function', { fg = colors.red })
   hl(0, 'Type', { fg = colors.magenta_bright })
   hl(0, 'String', { fg = colors.green_bright })
+  hl(0, 'Search', { fg = colors.white, bg = colors.black_bright })
+  hl(0, 'CurSearch', { fg = colors.black_bright, bg = colors.white, bold = true })
 
   -- LSP (Language Server Protocol)
   hl(0, 'LspDiagnosticsDefaultError', { fg = colors.red })
@@ -63,14 +65,9 @@ _G.set_colors = function()
 
   -- Telescope (Fuzzy Finder)
   hl(0, 'TelescopeNormal', { fg = colors.white, bg = colors.black })
-  hl(0, 'TelescopeSelection', { fg = colors.black, bg = colors.white })
   hl(0, 'TelescopePromptBorder', { fg = colors.magenta })
   hl(0, 'TelescopeResultsBorder', { fg = colors.magenta })
   hl(0, 'TelescopePreviewBorder', { fg = colors.cyan })
-  hl(0, 'TelescopeMatching', { fg = colors.magenta_bright, bold = true })
-
-  vim.api.nvim_set_hl(0, 'Search', { fg = colors.white, bg = colors.cyan, bold = true })
-  vim.api.nvim_set_hl(0, 'IncSearch', { fg = colors.black, bg = colors.magenta_bright, bold = true })
 end
 
 -- Enable break indent
@@ -206,9 +203,6 @@ require('lazy').setup {
         pickers = {
           find_files = {
             hidden = true,
-          },
-          colorscheme = {
-            enable_preview = true,
           },
         },
         extensions = {
@@ -673,10 +667,6 @@ require('lazy').setup {
   -- Highlight todo, notes, etc in comments
   { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
 
-  { 'Shatur/neovim-ayu' },
-
-  { 'catppuccin/nvim', name = 'catppuccin', priority = 1000 },
-
   { -- Collection of various small independent plugins/modules
     'echasnovski/mini.nvim',
     config = function()
@@ -749,7 +739,6 @@ vim.cmd [[
 
 vim.api.nvim_create_user_command('ReloadColors', function()
   _G.set_colors()
-  print 'Colors reloaded!' -- Optional feedback message
 end, {})
 
 -- Load the colorscheme
