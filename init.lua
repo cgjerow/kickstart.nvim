@@ -1,5 +1,6 @@
 --  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
 vim.g.mapleader = ','
+vim.opt.termguicolors = true
 vim.opt.number = true
 vim.opt.relativenumber = true
 vim.opt.mouse = 'a'
@@ -8,6 +9,69 @@ vim.opt.showmode = false
 vim.schedule(function()
   vim.opt.clipboard = 'unnamedplus'
 end)
+
+local colors = {
+  black = '#1A1E29',
+  red = '#ED8274',
+  green = '#A6CC70',
+  yellow = '#FAD07B',
+  blue = '#6DCBFA',
+  magenta = '#CFBAFA',
+  cyan = '#90E1C6',
+  white = '#C7C7C7',
+
+  black_bright = '#686868',
+  red_bright = '#F28779',
+  green_bright = '#C7F489',
+  yellow_bright = '#FFD580',
+  blue_bright = '#73D0FF',
+  magenta_bright = '#D4BFFF',
+  cyan_bright = '#95E6CB',
+  white_bright = '#FFFFFF',
+}
+_G.set_colors = function()
+  local hl = vim.api.nvim_set_hl
+
+  -- Basic UI
+  hl(0, 'Normal', { fg = colors.white, bg = colors.black })
+  hl(0, 'NormalNC', { fg = colors.white, bg = colors.black })
+  hl(0, 'Comment', { fg = colors.black_bright, italic = true })
+  hl(0, 'LineNr', { fg = colors.black_bright })
+  hl(0, 'CursorLineNr', { fg = colors.black_bright, bold = true })
+  hl(0, 'Keyword', { fg = colors.cyan, bold = true })
+  hl(0, 'Function', { fg = colors.red })
+  hl(0, 'Type', { fg = colors.magenta_bright })
+  hl(0, 'String', { fg = colors.green_bright })
+
+  -- LSP (Language Server Protocol)
+  hl(0, 'LspDiagnosticsDefaultError', { fg = colors.red })
+  hl(0, 'LspDiagnosticsDefaultWarning', { fg = colors.yellow })
+  hl(0, 'LspDiagnosticsDefaultInformation', { fg = colors.black_bright })
+  hl(0, 'LspDiagnosticsDefaultHint', { fg = colors.black_bright })
+  hl(0, 'LspReferenceText', { bg = colors.black_bright }) -- Highlight referenced text
+  hl(0, 'LspReferenceRead', { bg = colors.black_bright })
+  hl(0, 'LspReferenceWrite', { bg = colors.black_bright })
+
+  -- Treesitter (Syntax Highlighting)
+  hl(0, 'TSFunction', { fg = colors.red, bold = true })
+  hl(0, 'TSKeyword', { fg = colors.cyan, bold = true })
+  hl(0, 'TSString', { fg = colors.green_bright })
+  hl(0, 'TSVariable', { fg = colors.white_bright })
+  hl(0, 'TSProperty', { fg = colors.magenta })
+  hl(0, 'TSComment', { fg = colors.black_bright, italic = true })
+  hl(0, 'TSOperator', { fg = colors.white_bright })
+
+  -- Telescope (Fuzzy Finder)
+  hl(0, 'TelescopeNormal', { fg = colors.white, bg = colors.black })
+  hl(0, 'TelescopeSelection', { fg = colors.black, bg = colors.white })
+  hl(0, 'TelescopePromptBorder', { fg = colors.magenta })
+  hl(0, 'TelescopeResultsBorder', { fg = colors.magenta })
+  hl(0, 'TelescopePreviewBorder', { fg = colors.cyan })
+  hl(0, 'TelescopeMatching', { fg = colors.magenta_bright, bold = true })
+
+  vim.api.nvim_set_hl(0, 'Search', { fg = colors.white, bg = colors.cyan, bold = true })
+  vim.api.nvim_set_hl(0, 'IncSearch', { fg = colors.black, bg = colors.magenta_bright, bold = true })
+end
 
 -- Enable break indent
 vim.opt.breakindent = true
@@ -598,26 +662,6 @@ require('lazy').setup {
     end,
   },
 
-  { -- You can easily change to a different colorscheme.
-    -- Change the name of the colorscheme plugin below, and then
-    -- change the command in the config to whatever the name of that colorscheme is.
-    --
-    -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
-    'shaunsingh/nord.nvim',
-
-    priority = 1000, -- Make sure to load this before all the other start plugins.
-    init = function()
-      -- Load the colorscheme here.
-      -- Like many other themes, this one has different styles, and you could load
-      -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-      vim.g.nord_cursorline_transparent = true
-      vim.cmd.colorscheme 'nord'
-
-      -- You can configure highlights by doing something like:
-      vim.cmd.hi 'Comment gui=none'
-    end,
-  },
-
   -- Highlight todo, notes, etc in comments
   { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
 
@@ -694,3 +738,11 @@ vim.cmd [[
 
   set shiftwidth=2 tabstop=2 softtabstop=0 expandtab
 ]]
+
+vim.api.nvim_create_user_command('ReloadColors', function()
+  _G.set_colors()
+  print 'Colors reloaded!' -- Optional feedback message
+end, {})
+
+-- Load the colorscheme
+set_colors()
