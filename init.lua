@@ -334,8 +334,16 @@ require('lazy').setup {
           end, { desc = 'gd' })
 
           -- Find references for the word under your cursor.
-          vim.keymap.set('n', 'gr', function()
+          vim.keymap.set('n', 'gt', function()
             require('telescope.builtin').lsp_references { jump_type = 'tab' }
+          end, { desc = 'get telescope reference' })
+
+          vim.keymap.set('n', 'gr', function()
+            local function on_list(options)
+              vim.fn.setqflist({}, ' ', options)
+              vim.cmd.cfirst()
+            end
+            vim.lsp.buf.definition { on_list = on_list }
           end, { desc = 'gr' })
 
           -- Jump to the implementation of the word under your cursor.
