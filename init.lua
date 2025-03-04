@@ -185,7 +185,6 @@ require('lazy').setup {
         -- `build` is used to run some command when the plugin is installed/updated.
         -- This is only run then, not every time Neovim starts up.
         build = 'make',
-
         -- `cond` is a condition used to determine whether this plugin should be
         -- installed and loaded.
         cond = function()
@@ -215,13 +214,13 @@ require('lazy').setup {
             i = { -- Insert mode
               ['<C-j>'] = actions.move_selection_next, -- Move down
               ['<C-k>'] = actions.move_selection_previous, -- Move up
-              ['<CR>'] = actions.select_default, -- Select item
-              ['<Right>'] = actions.select_default, -- Select with Right Arrow
+              ['<CR>'] = actions.select_tab, -- Select item
+              ['<Right>'] = actions.select_tab, -- Select with Right Arrow
             },
             n = { -- Normal mode (optional)
               ['<C-j>'] = actions.move_selection_next,
               ['<C-k>'] = actions.move_selection_previous,
-              ['<CR>'] = actions.select_default,
+              ['<CR>'] = actions.select_tab,
             },
           },
         },
@@ -451,6 +450,7 @@ require('lazy').setup {
         --
 
         kotlin_language_server = {},
+        protols = {},
         lua_ls = {
           -- cmd = { ... },
           -- filetypes = { ... },
@@ -488,6 +488,8 @@ require('lazy').setup {
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
       require('mason-lspconfig').setup {
+        ensure_installed = {},
+        automatic_installation = false,
         handlers = {
           function(server_name)
             local server = servers[server_name] or {}
