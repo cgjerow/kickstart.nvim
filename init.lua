@@ -202,6 +202,7 @@ require('lazy').setup {
         pickers = {
           find_files = {
             hidden = true,
+            no_ignore = true,
           },
         },
         extensions = {
@@ -225,6 +226,18 @@ require('lazy').setup {
           },
         },
       }
+
+      local ignore_gitignore = true
+
+      function ToggleIgnoreGitignore()
+        ignore_gitignore = not ignore_gitignore
+        local status = ignore_gitignore and 'Ignoring .gitignore 🚀' or 'Respecting .gitignore ✅'
+        print(status)
+        require('telescope.builtin').find_files { hidden = true, no_ignore = ignore_gitignore }
+      end
+
+      vim.api.nvim_set_keymap('n', '<leader>fi', ':lua ToggleIgnoreGitignore()<CR>', { noremap = true, silent = true })
+
       pcall(require('telescope').load_extension, 'fzf')
       pcall(require('telescope').load_extension, 'ui-select')
 
@@ -269,6 +282,7 @@ require('lazy').setup {
       { 'williamboman/mason.nvim', opts = {} },
       'williamboman/mason-lspconfig.nvim',
       'WhoIsSethDaniel/mason-tool-installer.nvim',
+      'nvim-java/nvim-java',
 
       -- Useful status updates for LSP.
       { 'j-hui/fidget.nvim', opts = {} },
@@ -327,11 +341,11 @@ require('lazy').setup {
           end, { desc = 'gd' })
 
           -- Find references for the word under your cursor.
-          vim.keymap.set('n', 'gt', function()
+          vim.keymap.set('n', 'gr', function()
             require('telescope.builtin').lsp_references { jump_type = 'tab' }
           end, { desc = 'get telescope reference' })
 
-          vim.keymap.set('n', 'gr', function()
+          vim.keymap.set('n', 'gR', function()
             local function on_list(options)
               vim.fn.setqflist({}, ' ', options)
               vim.cmd.cfirst()
@@ -448,9 +462,9 @@ require('lazy').setup {
         -- But for many setups, the LSP (`ts_ls`) will work just fine
         -- ts_ls = {},
         --
-
-        kotlin_language_server = {},
+        --
         protols = {},
+        kotlin_language_server = {},
         lua_ls = {
           -- cmd = { ... },
           -- filetypes = { ... },
@@ -499,8 +513,11 @@ require('lazy').setup {
             server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
             require('lspconfig')[server_name].setup(server)
           end,
+          require('java').setup {},
+          require('lspconfig').jdtls.setup {},
         },
       }
+      require('lspconfig').protols.setup {} -- I don't know why this isn't picked up in the above function but it's not
     end,
   },
   { -- Autoformat
@@ -651,6 +668,7 @@ require('lazy').setup {
 
           -- For more advanced Luasnip keymaps (e.g. selecting choice nodes, expansion) see:
           --    https://github.com/L3MON4D3/LuaSnip?tab=readme-ov-file#keymaps
+          vim.keymap.set('n', 'K', vim.lsp.buf.hover, { desc = 'LSP: Show Symbol Details' }),
         },
         sources = {
           {
@@ -705,7 +723,7 @@ require('lazy').setup {
     main = 'nvim-treesitter.configs', -- Sets main module to use for opts
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
     opts = {
-      ensure_installed = { 'kotlin', 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' },
+      ensure_installed = { 'kotlin', 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc', 'java' },
       -- Autoinstall languages that are not installed
       auto_install = true,
       highlight = {
